@@ -19,6 +19,9 @@ unsigned char SP;
 /* stack should store address where interpreter should return to */
 unsigned short stack[16];
 
+/* last byte of rom address. */
+unsigned short rom_end_addr;
+
 int initialize();
 int load_rom(char* rom_path);
 int emulate_cycle();
