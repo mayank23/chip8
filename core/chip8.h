@@ -16,7 +16,7 @@ unsigned short PC, I;
 /* Stack Pointer, points to top most level of stack */
 unsigned char SP;
 
-/* stack should store the Program Counter (index of the first byte of the instruction in memory) the PC should return to .*/
+/* stack should store the Program Counter (index of the first byte of the instruction in memory) to come back later.*/
 unsigned short stack[16];
 
 /* last byte of rom address. */
