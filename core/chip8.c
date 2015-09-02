@@ -69,22 +69,65 @@ int emulate_cycle(){
 
     case 0x0000:
 
+      switch(opcode & 0x00FF)
+      {
+        case 0x00E0:
+          // clear the display
+        break;
+
+        case 0x00EE:
+          // return from subroutine
+          // set PC to addr at top of stack.
+          PC = stack[SP];
+          stack[SP] = 0; // clear out stack entry.
+          SP--; // decrement stack pointer
+
+        break;
+
+        default:
+          instruction_error(opcode);
+      }
 
     break;
 
     case 0x1000:
+      // jump to location nnn
+      unsigned short jump_address = opcode & 0x0FFF;
+      PC = jump_address;
     break;
 
     case 0x2000:
+      // call subroutine at address nnn
+      unsigned short subroutine_address = opcode & 0x0FFF;
+      SP++; // new spot on the stack.
+      stack[SP] = PC;
+      PC = subroutine_address;
     break;
 
     case 0x3000:
+      // 3xkk
+      // skip next instruction if Vx = kk
+      if(V[(opcode & 0x0F00 >> 8)] == (opcode & 0x00FF)){
+        PC += 4; // each instruction is 2 bytes.
+      }
     break;
 
     case 0x4000:
+      // 4xkk
+      // if Vx != kk skip the next instruction
+      if(V[(opcode & 0x0F00) >> 8] != (opcode & 0x00FF))
+      {
+        PC += 4;
+      }
     break;
 
     case 0x5000:
+      // 5xy0
+      // if vx and xy are equal, skip the next instruction
+      if(V[(opcode & 0x0F00) >> 8] == V[(opcode & 0x00F0) >> 4])
+      {
+        PC += 4;
+      }
     break;
 
     case 0x6000:
@@ -92,6 +135,53 @@ int emulate_cycle(){
       V[(opcode & 0x0F00) >> 8] = (opcode & 0x00FF);
       //printf("Load register: %X with %X\n", (opcode & 0x0F00) >> 8, opcode & 0x00FF); 
       break;
+
+    case 0x7000:
+      //7xkk 
+      // adds kk to register Vx and stores it there.
+      V[(opcode & 0x0F00) >> 8]+= (opcode & 0x00FF);
+
+    break;
+
+    case 0x8000:
+      // 8xyn
+      switch(opcode & 0x000F){
+
+        case 0x0001:
+          // set Vx = Vx | Vy.
+          V[(opcode & 0x0F00) >> 8] = V[(opcode & 0x0F00) >> 8] | V[(opcode & 0x00F0) >> 4];
+
+        break;
+        case 0x0002:
+          // set Vx = Vx & Vy
+        V[(opcode & 0x0F00) >> 8] = V[(opcode & 0x0F00) >> 8] & V[(opcode & 0x00F0) >> 4];
+
+        break;
+        case 0x0003:
+          // set Vx = Vx ^ Vy
+          V[(opcode & 0x0F00) >> 8] = V[(opcode & 0x0F00) >> 8] ^ V[(opcode & 0x00F0) >> 4];
+
+
+        break;
+        case 0x0004:
+        break;
+        case 0x0005:
+        break;
+        case 0x0006:
+        break;
+        case 0x0007:
+        break;
+        case 0x000E:
+        break;
+
+      }
+
+
+    break;
+
+    case 0x9000:
+
+    break;
 
   }
 
@@ -120,4 +210,8 @@ void dump_memory(){
     }
 
   }
+}
+
+void instruction_error(unsigned short instruction){
+  printf(stderr, "Unknown Instruction %X\n", instruction);
 }
