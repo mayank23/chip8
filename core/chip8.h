@@ -22,10 +22,10 @@ unsigned short stack[16];
 /* last byte of rom address. */
 unsigned short rom_end_addr;
 
-int initialize();
+int initialize_core();
 int load_rom(char* rom_path);
 int emulate_cycle();
-void exit();
+void exit_core();
 /* Debug Methods */
 void dump_memory();
 void dump_registers();

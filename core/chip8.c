@@ -1,9 +1,11 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <time.h>
+#include <unistd.h>
 #include "chip8.h"
-
-int initialize(){
+#include "../gui/game_window.h"
+int initialize_core(){
 
   /* clear all registers and memory */
 
@@ -23,7 +25,15 @@ int initialize(){
     0x20,0x60,0x20,0x20,0x70
   }
   */
+  // intialize random number generation with seed
+  srand(time(NULL));
 
+  draw_color background_color;
+  background_color.r = 0;
+  background_color.g = 0;
+  background_color.b = 0;
+  background_color.a = 255; // opaque
+  setup_game_window(&background_color);
   printf("%s\n", "Initialized Values");
   return 0;
 }
@@ -264,8 +274,43 @@ int emulate_cycle(){
 
     case 0x9000:
     {
-    break;
+      // if Vx != Vy, skip next instruction.
+      //9xy0
+      if(V[(opcode & 0x0F00) >> 8] != V[(opcode & 0x00F0) >> 4])
+      {
+        PC+=4;
+      }
+      return 0;
     } 
+
+    case 0xA000:
+    {
+      // Annn, set I = nnn
+      I = (opcode & 0x0FFF);
+      break;
+    }
+
+    case 0xB000:
+    {
+      // jump to address nnn in ram + V[0]
+      PC = (opcode & 0x0FFF) + V[0];
+      break;
+    }
+
+    case 0xC000:
+    {
+
+      V[(opcode & 0x0F00) >> 8] = (rand() % 256) & (opcode & 0x00FF);
+
+      break;
+    }
+
+    case 0XD000:
+    {
+      
+
+      break;
+    }
   }
 
   PC+=2;
@@ -277,8 +322,8 @@ int emulate_cycle(){
   }
 }
 
-void exit(){
-  exit(0);
+void exit_core(){
+  destroy_game_window();
 }
 
 
