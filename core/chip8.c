@@ -308,7 +308,29 @@ int emulate_cycle(){
     case 0XD000:
     {
       
+      unsigned char n_bytes = (opcode & 0x000F);
+      unsigned char x_origin = V[(opcode & 0x0F00) >> 8];
+      unsigned char y_origin = V[(opcode & 0x00F0) >> 4];
 
+      for(unsigned short mem_index = I, unsigned short y_offset = 0;mem_index < I + n_bytes; mem_index++, y_offset++)
+      {
+        unsigned char current_byte = memory[mem_index];
+
+        for(int shift=7, x_offset = 0; shift>=0; shift--, x_offset++)
+        {
+          // for right now do not wrap over screen.
+          if(y_origin + y_offset <= 63 && x_origin + x_offset <= 31){
+          unsigned char current_bit = (current_byte >> shift) & 1;
+          if((screen_pixels[y_origin + y_offset][x_origin + x_offset] ^  current_bit) == 0 && current_bit!=0)
+          {
+            V[0xF] = 1; // collision
+          }
+          // pixel state for draw.
+          screen_pixels[y_origin + y_offset][x_origin + x_offset] ^= current_bit;
+          }
+        }
+      }
+      draw_to_screen();
       break;
     }
   }
@@ -321,6 +343,20 @@ int emulate_cycle(){
     return -1;
   }
 }
+
+
+void draw_to_screen(){
+
+  for(int i=0;i<WINDOW_HEIGHT;i++)
+  {
+    for(int j=0;j<WINDOW_WIDTH;j++)
+    {
+      
+    }
+  }
+
+}
+
 
 void exit_core(){
   destroy_game_window();

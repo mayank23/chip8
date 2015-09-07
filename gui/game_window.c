@@ -5,6 +5,15 @@ void setup_game_window(draw_color* initial_color){
 
   SDL_CreateWindowAndRenderer(WINDOW_WIDTH, WINDOW_HEIGHT, 0, &game_window, &game_window_renderer);
   clear_window(initial_color);
+  // initialize the screen buffer.
+  for(int i=0;i<WINDOW_HEIGHT;i++)
+  {
+    for(int j=0;j<WINDOW_WIDTH;j++)
+    {
+      screen_pixels[i][j] = 0;
+    }
+  }
+  draw_flag = FALSE;
 }
 
 void destroy_game_window(){

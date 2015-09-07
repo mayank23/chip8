@@ -8,10 +8,11 @@ int main(int argc, char** argv)
   initialize_core();
   load_rom("./games/PONG");
   dump_memory();
-  /*while(emulate_cycle() != -1)
+/*  while(emulate_cycle() != -1)
   {
 
-  }*/
+  }
+  */
   exit_core();
 
   return 0;
