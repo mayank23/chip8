@@ -29,9 +29,11 @@ int emulate_cycle();
 void exit_core();
 
 /* drawing methods */
-void draw_to_screen();
+void draw_to_screen(unsigned char, unsigned char, unsigned char);
+void clear_screen();
 
 /* Debug Methods */
 void dump_memory();
 void dump_registers();
 void instruction_error(unsigned short instruction);
+
