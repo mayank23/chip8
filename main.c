@@ -15,15 +15,34 @@ int main(int argc, char** argv)
   {
     printf("Please enter game path through command line arg.\n");
     return 1;
-  }
-  load_rom(game_path);
-  dump_memory();
-  while(emulate_cycle() != -1)
-  {
+  }else
+  if(strcmp(game_path, "interactive") == 0){
+    // interactive  mode.
+    initialize_interactive_mode();
+    unsigned short current_addr = 0x200;
+    while(current_addr < 0xFFF)
+    {
+      unsigned short instruction =0;
+      scanf("%hx",&instruction);
+      if(instruction == 0)
+      {
+        exit_core();
+        return 0;
+      }
+      printf("instruction loaded into memory\n");
+      load_single_instruction_into_memory(current_addr, instruction);
+      emulate_cycle();
+      current_addr+=2;
+    }
+  }else{
+    load_rom(game_path);
+    while(emulate_cycle() != -1)
+    { 
     int ret = get_key_press();
-  }
-  exit_core();
+    }
+    exit_core();
 
+  }
   return 0;
 }
 

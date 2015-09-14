@@ -1,13 +1,6 @@
 #include <SDL.h>
 #include "key_press.h"
 #include "game_window.h"
-void reset_key_press_states(){
-  for(int i=0;i<16;i++)
-  {
-    key_press_state[i] = 0;
-  }
-}
-
 
 int get_key_press(){
 
@@ -16,7 +9,6 @@ int get_key_press(){
   {
     if(e.type == SDL_KEYDOWN)
     {
-      printf("%s", "Pressed key\n");
       switch(e.key.keysym.sym)
       {
         case SDLK_1:{
@@ -83,16 +75,11 @@ int get_key_press(){
            key_press_state[15] = 1;
                    break;
         }
-        default:
-        {
-          printf("Unrecognized key press!\n");
-        }
       }
       return 1;
     }else
     if(e.type == SDL_KEYUP)
     {
-      printf("%s", "Pressed key\n");
       switch(e.key.keysym.sym)
       {
         case SDLK_1:{
@@ -159,16 +146,12 @@ int get_key_press(){
            key_press_state[15] = 0;
                    break;
         }
-        default:
-        {
-            destroy_game_window();
-            exit(1);
-        }
       }
       return 1;
     }else
     if(e.type == SDL_QUIT)
     {
+      destroy_game_window();
       exit(0);
     }else{
       return 0;
